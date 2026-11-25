@@ -2459,6 +2459,10 @@ get_fib(const char *name)
 	int s, fib = RT_DEFAULT_FIB;
 
 	if ((s = socket(AF_INET, SOCK_DGRAM | SOCK_CLOEXEC, 0)) == -1)
+		if (errno == EPROTONOSUPPORT)
+			s = socket(AF_INET6, SOCK_DGRAM | SOCK_CLOEXEC, 0);
+
+	if (s == -1)
 		fatal("get_fib: socket");
 
 	strlcpy(ifr.ifr_name, name, sizeof(ifr.ifr_name));
